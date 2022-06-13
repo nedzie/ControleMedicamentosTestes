@@ -1,5 +1,6 @@
 using ControleMedicamento.Infra.BancoDados.ModuloMedicamento;
 using ControleMedicamentos.Dominio.ModuloMedicamento;
+using ControleMedicamentos.Infra.BancoDados.Compartilhado;
 using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -10,6 +11,16 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
     [TestClass]
     public class RepositorioMedicamentoEmBancoDadosTest
     {
+        Medicamento med;
+        RepositorioMedicamentoEmBancoDados _repositorioMed;
+        public RepositorioMedicamentoEmBancoDadosTest()
+        {
+            Db.ExecutarSql("DELETE FROM TBMEDICAMENTO; DBCC CHECKIDENT (TBMEDICAMENTO, RESEED, 0)");
+
+            med = new("Teste", "10 caracteres", "Teste", DateTime.MaxValue);
+
+            _repositorioMed = new();
+        }
         [TestMethod]
         public void DeveConectarComBanco()
         {
@@ -31,12 +42,8 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
             Assert.AreEqual(1, Convert.ToInt32(res));
         }
         [TestMethod]
-        public void Deve_inserir_medicamento()
+        public void DeveInserirMedicamento()
         {
-            Medicamento med = new("Teste", "10 caracteres", "Teste", DateTime.MaxValue);
-
-            RepositorioMedicamentoEmBancoDados _repositorioMed = new();
-
             ValidationResult vr =_repositorioMed.Inserir(med);
 
             Assert.IsTrue(vr.IsValid);

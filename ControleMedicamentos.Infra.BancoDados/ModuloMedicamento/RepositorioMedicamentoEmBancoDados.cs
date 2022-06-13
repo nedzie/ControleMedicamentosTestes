@@ -18,7 +18,8 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
                         DESCRICAO,
                         LOTE,
                         VALIDADE,
-                        QUANTIDADEDISPONIVEL
+                        QUANTIDADEDISPONIVEL,
+                        FORNECEDOR_ID
                     )
                         VALUES
                     (
@@ -26,7 +27,8 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
                         @DESCRICAO,
                         @LOTE,
                         @VALIDADE,
-                        @QUANTIDADEDISPONIVEL
+                        @QUANTIDADEDISPONIVEL,
+                        @FORNECEDOR_ID
                     ); SELECT SCOPE_IDENTITY();";
 
         private const string sqlEditar =
@@ -89,7 +91,7 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
             comandoInsercao.Parameters.AddWithValue("@LOTE", novoMedicamento.Lote);
             comandoInsercao.Parameters.AddWithValue("@VALIDADE", novoMedicamento.Validade);
             comandoInsercao.Parameters.AddWithValue("@QUANTIDADEDISPONIVEL", novoMedicamento.QuantidadeDisponivel);
-            //comandoInsercao.Parameters.AddWithValue("@FORNECEDOR_ID", novoMedicamento.Fornecedor.Numero);
+            comandoInsercao.Parameters.AddWithValue("@FORNECEDOR_ID", novoMedicamento.Fornecedor.Numero);
         }
     }
 }

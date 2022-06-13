@@ -7,6 +7,10 @@
         public string Email { get; set; }
         public string Cidade { get; set; }
         public string Estado { get; set; }
+        public Fornecedor()
+        {
+
+        }
         public Fornecedor(string nome, string telefone, string email, string cidade, string estado)
         {
             Nome = nome;

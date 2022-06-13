@@ -13,7 +13,7 @@ namespace ControleMedicamentos.Dominio.ModuloMedicamento
         public DateTime Validade { get; set; }
         public int QuantidadeDisponivel { get; set; }
         public List<Requisicao> Requisicoes { get; set; }
-        public Fornecedor Fornecedor{ get; set; }
+        public Fornecedor Fornecedor { get; set; }
         public int QuantidadeRequisicoes { get { return Requisicoes.Count; } }
         public Medicamento(string nome, string descricao, string lote, DateTime validade)
         {
