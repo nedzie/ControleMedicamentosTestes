@@ -1,6 +1,8 @@
 using ControleMedicamento.Infra.BancoDados.ModuloMedicamento;
+using ControleMedicamentos.Dominio.ModuloFornecedor;
 using ControleMedicamentos.Dominio.ModuloMedicamento;
 using ControleMedicamentos.Infra.BancoDados.Compartilhado;
+using ControleMedicamentos.Infra.BancoDados.ModuloFornecedor;
 using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -13,13 +15,19 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
     {
         Medicamento med;
         RepositorioMedicamentoEmBancoDados _repositorioMed;
+        RepositorioFornecedorEmBancoDados _repositorioForn;
+        Fornecedor forn;
+
         public RepositorioMedicamentoEmBancoDadosTest()
         {
             Db.ExecutarSql("DELETE FROM TBMEDICAMENTO; DBCC CHECKIDENT (TBMEDICAMENTO, RESEED, 0)");
 
             med = new("Teste", "10 caracteres", "Teste", DateTime.MaxValue);
+            forn = new("Fornecedor", "49998287261", "contato@gmail.com", "Lages", "SC");
+
 
             _repositorioMed = new();
+            _repositorioForn = new();
         }
         [TestMethod]
         public void DeveConectarComBanco()
@@ -44,9 +52,17 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
         [TestMethod]
         public void DeveInserirMedicamento()
         {
-            ValidationResult vr =_repositorioMed.Inserir(med);
+            _repositorioForn.Inserir(forn);
 
-            Assert.IsTrue(vr.IsValid);
+            med.Fornecedor = forn;
+
+            _repositorioMed.Inserir(med);
+
+            var medicamentoEncontrado = _repositorioMed.SelecionarPorId(med.Numero);
+
+            Assert.IsNotNull(medicamentoEncontrado);
+
+            Assert.AreEqual(medicamentoEncontrado, med);
         }
     }
 }

@@ -118,6 +118,19 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloFornecedor
             return resultadoValidacao;
         }
 
+        public void Excluir(Fornecedor fornecedor)
+        {
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoExclusao = new SqlCommand(sqlExcluir, conexaoComBanco);
+
+            comandoExclusao.Parameters.AddWithValue("ID", fornecedor.Numero);
+
+            conexaoComBanco.Open();
+            comandoExclusao.ExecuteNonQuery();
+            conexaoComBanco.Close();
+        }
+
         public List<Fornecedor> SelecionarTodos()
         {
             SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
@@ -135,19 +148,6 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloFornecedor
             conexaoComBanco.Close();
 
             return fornecedores;
-        }
-
-        public void Excluir(Fornecedor fornecedor)
-        {
-            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
-
-            SqlCommand comandoExclusao = new SqlCommand(sqlExcluir, conexaoComBanco);
-
-            comandoExclusao.Parameters.AddWithValue("ID", fornecedor.Numero);
-
-            conexaoComBanco.Open();
-            comandoExclusao.ExecuteNonQuery();
-            conexaoComBanco.Close();
         }
 
         public Fornecedor SelecionarPorId(int id)
