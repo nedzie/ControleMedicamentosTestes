@@ -1,15 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ModuloPaciente\**" />
     <Compile Remove="ModuloRequisicao\**" />
-    <EmbeddedResource Remove="ModuloPaciente\**" />
     <EmbeddedResource Remove="ModuloRequisicao\**" />
-    <None Remove="ModuloPaciente\**" />
     <None Remove="ModuloRequisicao\**" />
   </ItemGroup>
 

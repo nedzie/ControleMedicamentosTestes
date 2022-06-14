@@ -43,7 +43,7 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloFuncionario
 
             Assert.IsNotNull(funcionarioEncontrado);
 
-            Assert.AreEqual(funcionarioEncontrado, func);
+            Assert.AreEqual(func, funcionarioEncontrado);
         }
 
         [TestMethod]
