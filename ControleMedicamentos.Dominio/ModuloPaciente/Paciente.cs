@@ -4,6 +4,10 @@
     {
         public string Nome { get; set; }
         public string CartaoSUS { get; set; }
+        public Paciente()
+        {
+
+        }
         public Paciente(string nome, string cartaoSUS)
         {
             Nome = nome;

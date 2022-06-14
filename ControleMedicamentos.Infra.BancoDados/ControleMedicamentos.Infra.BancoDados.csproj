@@ -5,13 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ModuloFuncionario\**" />
     <Compile Remove="ModuloPaciente\**" />
     <Compile Remove="ModuloRequisicao\**" />
-    <EmbeddedResource Remove="ModuloFuncionario\**" />
     <EmbeddedResource Remove="ModuloPaciente\**" />
     <EmbeddedResource Remove="ModuloRequisicao\**" />
-    <None Remove="ModuloFuncionario\**" />
     <None Remove="ModuloPaciente\**" />
     <None Remove="ModuloRequisicao\**" />
   </ItemGroup>

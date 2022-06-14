@@ -3,7 +3,7 @@ using ControleMedicamentos.Infra.BancoDados.Compartilhado;
 using ControleMedicamentos.Infra.BancoDados.ModuloFornecedor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ControleMedicamentos.Infra.BancoDados.Tests
+namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloFornecedor
 {
     [TestClass]
     public class RepositorioFornecedorEmBancoDadosTest

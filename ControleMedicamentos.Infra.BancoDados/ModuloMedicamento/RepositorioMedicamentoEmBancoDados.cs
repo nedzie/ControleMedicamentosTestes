@@ -130,7 +130,10 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
 
             Medicamento med = null;
             if (leitorMedicamento.Read())
+            {
                 med = ConverterParaMedicamento(leitorMedicamento);
+                CarregarRequisicoes(med);
+            }
 
             conexaoComBanco.Close();
 

@@ -136,6 +136,7 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloFornecedor
             SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
 
             SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTodos, conexaoComBanco);
+
             conexaoComBanco.Open();
 
             SqlDataReader leitorFornecedor = comandoSelecao.ExecuteReader();

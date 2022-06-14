@@ -5,6 +5,10 @@
         public string Nome { get; set; }
         public string Login { get; set; }
         public string Senha { get; set; }
+        public Funcionario()
+        {
+
+        }
         public Funcionario(string nome, string login, string senha)
         {
             Nome = nome;
