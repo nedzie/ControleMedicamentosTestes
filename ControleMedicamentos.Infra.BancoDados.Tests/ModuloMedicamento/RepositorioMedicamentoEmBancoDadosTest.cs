@@ -22,7 +22,7 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
         {
             Db.ExecutarSql("DELETE FROM TBMEDICAMENTO; DBCC CHECKIDENT (TBMEDICAMENTO, RESEED, 0)");
 
-            med = new("Teste", "10 caracteres", "Teste", DateTime.MaxValue);
+            med = new("Teste", "10 caracteres", "Teste", DateTime.Today);
             forn = new("Fornecedor", "49998287261", "contato@gmail.com", "Lages", "SC");
 
 
@@ -59,6 +59,8 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
             _repositorioMed.Inserir(med);
 
             var medicamentoEncontrado = _repositorioMed.SelecionarPorId(med.Numero);
+
+            medicamentoEncontrado.Validade = DateTime.SpecifyKind(medicamentoEncontrado.Validade, DateTimeKind.Local);
 
             Assert.IsNotNull(medicamentoEncontrado);
 

@@ -132,7 +132,7 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
             if (leitorMedicamento.Read())
             {
                 med = ConverterParaMedicamento(leitorMedicamento);
-                CarregarRequisicoes(med);
+                //CarregarRequisicoes(med);
             }
 
             conexaoComBanco.Close();
@@ -188,7 +188,7 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
             string telefone = leitorMedicamento["F_TELEFONE"].ToString();
             string email = leitorMedicamento["F_EMAIL"].ToString();
             string cidade = leitorMedicamento["F_CIDADE"].ToString();
-            string estado = leitorMedicamento["F_CIDADE"].ToString();
+            string estado = leitorMedicamento["F_ESTADO"].ToString();
 
             return new Medicamento
             {
@@ -198,6 +198,7 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
                 Lote = lote,
                 Validade = validade,
                 QuantidadeDisponivel = qtde,
+                Requisicoes = new(),
                 Fornecedor = new Fornecedor
                 {
                     Numero = idForn,
