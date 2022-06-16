@@ -3,6 +3,7 @@ using ControleMedicamentos.Dominio.ModuloMedicamento;
 using ControleMedicamentos.Dominio.ModuloRequisicao;
 using FluentValidation.Results;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
@@ -34,24 +35,41 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
                     ); SELECT SCOPE_IDENTITY();";
 
         private const string sqlEditar =
-            @"UPDATE 
-                TB_DISCIPLINA
+            @"UPDATE
+                TBMEDICAMENTO
                     SET
-                        NOME = @NOME
-                    WHERE 
-                        NUMERO = @NUMERO";
+                        NOME = @NOME,
+                        DESCRICAO = @DESCRICAO,
+                        LOTE = @LOTE,
+                        VALIDADE = @VALIDADE,
+                        QUANTIDADEDISPONIVEL = @QUANTIDADEDISPONIVEL,
+                        FORNECEDOR_ID = @FORNECEDOR_ID
+                    WHERE
+                        ID = @ID";
 
         private const string sqlExcluir =
             @"DELETE FROM 
-                TB_DISCIPLINA
+                TBMEDICAMENTO
                     WHERE
-                        NUMERO = @NUMERO";
+                        ID = @ID";
 
         private const string sqlSelecionarTodos =
-            @"SELECT 
-                    NUMERO, NOME 
-                FROM 
-                    TB_DISCIPLINA";
+            @"SELECT
+                MED.ID AS M_ID,
+                MED.NOME AS M_NOME,
+                MED.DESCRICAO AS M_DESCRICAO,
+                MED.LOTE AS M_LOTE,
+                MED.VALIDADE AS M_VALIDADE,
+                MED.QUANTIDADEDISPONIVEL AS M_QUANTIDADEDISPONIVEL,
+                FORN.ID AS F_ID,
+                FORN.NOME AS F_NOME,
+                FORN.TELEFONE AS F_TELEFONE,
+                FORN.EMAIL AS F_EMAIL,
+                FORN.CIDADE AS F_CIDADE,
+                FORN.ESTADO AS F_ESTADO
+                    FROM
+                TBMEDICAMENTO AS MED INNER JOIN
+                         TBFORNECEDOR AS FORN ON MED.FORNECEDOR_ID = FORN.ID";
 
         private const string sqlSelecionarPorId =
             @"SELECT        
@@ -73,6 +91,8 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
                 WHERE
                     MED.ID = @ID";
 
+        
+
         private const string sqlSelecionarRequisicoes =
             @"SELECT         
                 TBREQUISICAO.ID AS R_ID,  
@@ -91,6 +111,8 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
                           TBPACIENTE ON  TBREQUISICAO.PACIENTE_ID =  TBPACIENTE.ID
                     WHERE
                         TBREQUISICAO.MEDICAMENTO_ID = @ID";
+
+        
 
         public ValidationResult Inserir(Medicamento novoMedicamento)
         {
@@ -114,6 +136,63 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
             conexaoComBanco.Close();
 
             return resultadoValidacao;
+        }
+
+        
+
+        public ValidationResult Editar(Medicamento med)
+        {
+            var validador = new ValidadorMedicamento();
+
+            var resultadoValidacao = validador.Validate(med);
+
+            if (!resultadoValidacao.IsValid)
+                return resultadoValidacao;
+
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoEdicao = new SqlCommand(sqlEditar, conexaoComBanco);
+
+            ConfigurarParametrosMedicamento(med, comandoEdicao);
+
+            conexaoComBanco.Open();
+            comandoEdicao.ExecuteNonQuery();
+            conexaoComBanco.Close();
+
+            return resultadoValidacao;
+        }
+
+        public void Excluir(int id)
+        {
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoExclusao = new SqlCommand(sqlExcluir, conexaoComBanco);
+
+            comandoExclusao.Parameters.AddWithValue("ID", id);
+
+            conexaoComBanco.Open();
+            comandoExclusao.ExecuteNonQuery();
+            conexaoComBanco.Close();
+        }
+
+        public List<Medicamento> SelecionarTodos()
+        {
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTodos, conexaoComBanco);
+
+            conexaoComBanco.Open();
+
+            SqlDataReader leitorMedicamento = comandoSelecao.ExecuteReader();
+
+            List<Medicamento> Medicamentos = new List<Medicamento>();
+
+            while (leitorMedicamento.Read())
+                Medicamentos.Add(ConverterParaMedicamento(leitorMedicamento));
+
+            conexaoComBanco.Close();
+
+            return Medicamentos;
         }
 
         public Medicamento SelecionarPorId(int id)
@@ -166,6 +245,7 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
 
         private void ConfigurarParametrosMedicamento(Medicamento novoMedicamento, SqlCommand comandoInsercao)
         {
+            comandoInsercao.Parameters.AddWithValue("@ID", novoMedicamento.Numero);
             comandoInsercao.Parameters.AddWithValue("@NOME", novoMedicamento.Nome);
             comandoInsercao.Parameters.AddWithValue("@DESCRICAO", novoMedicamento.Descricao);
             comandoInsercao.Parameters.AddWithValue("@LOTE", novoMedicamento.Lote);

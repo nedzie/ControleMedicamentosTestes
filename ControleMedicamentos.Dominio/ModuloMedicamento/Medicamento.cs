@@ -39,7 +39,6 @@ namespace ControleMedicamentos.Dominio.ModuloMedicamento
                    Lote == medicamento.Lote &&
                    Validade == medicamento.Validade &&
                    QuantidadeDisponivel == medicamento.QuantidadeDisponivel &&
-                   //EqualityComparer<List<Requisicao>>.Default.Equals(Requisicoes, medicamento.Requisicoes) &&
                    EqualityComparer<Fornecedor>.Default.Equals(Fornecedor, medicamento.Fornecedor) &&
                    QuantidadeRequisicoes == medicamento.QuantidadeRequisicoes;
         }

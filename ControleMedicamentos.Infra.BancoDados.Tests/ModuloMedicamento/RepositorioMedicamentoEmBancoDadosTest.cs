@@ -3,7 +3,6 @@ using ControleMedicamentos.Dominio.ModuloFornecedor;
 using ControleMedicamentos.Dominio.ModuloMedicamento;
 using ControleMedicamentos.Infra.BancoDados.Compartilhado;
 using ControleMedicamentos.Infra.BancoDados.ModuloFornecedor;
-using FluentValidation.Results;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Data.SqlClient;
@@ -17,6 +16,7 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
         RepositorioMedicamentoEmBancoDados _repositorioMed;
         RepositorioFornecedorEmBancoDados _repositorioForn;
         Fornecedor forn;
+        Fornecedor fornEditar;
 
         public RepositorioMedicamentoEmBancoDadosTest()
         {
@@ -24,7 +24,7 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
 
             med = new("Teste", "10 caracteres", "Teste", DateTime.Today);
             forn = new("Fornecedor", "49998287261", "contato@gmail.com", "Lages", "SC");
-
+            fornEditar = new("Fornecedor de editar", "49998000000", "editar@editar.com", "Editar", "ED");
 
             _repositorioMed = new();
             _repositorioForn = new();
@@ -60,11 +60,88 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
 
             var medicamentoEncontrado = _repositorioMed.SelecionarPorId(med.Numero);
 
-            medicamentoEncontrado.Validade = DateTime.SpecifyKind(medicamentoEncontrado.Validade, DateTimeKind.Local);
+            medicamentoEncontrado.Validade = DateTime.SpecifyKind(medicamentoEncontrado.Validade, DateTimeKind.Local); // Para ficar como "Local" ao invés de "Unespecified"
 
             Assert.IsNotNull(medicamentoEncontrado);
 
-            Assert.AreEqual(medicamentoEncontrado, med);
+            Assert.AreEqual(med, medicamentoEncontrado);
+        }
+
+        [TestMethod]
+        public void DeveEditarMedicamento()
+        {
+            _repositorioForn.Inserir(forn);
+            _repositorioForn.Inserir(fornEditar);
+
+            med.Fornecedor = forn;
+
+            _repositorioMed.Inserir(med);
+
+            med.Nome = "Dorflexxxxxx";
+            med.Fornecedor = fornEditar;
+
+            _repositorioMed.Editar(med);
+
+            var medicamentoEncontrado = _repositorioMed.SelecionarPorId(med.Numero);
+
+            Assert.IsNotNull(medicamentoEncontrado);
+
+            Assert.AreEqual(med, medicamentoEncontrado);
+        }
+
+        [TestMethod]
+        public void DeveExcluirMedicamento()
+        {
+            _repositorioForn.Inserir(forn);
+
+            med.Fornecedor = forn;
+
+            _repositorioMed.Inserir(med);
+
+            _repositorioMed.Excluir(med.Numero);
+
+            var medicamentoEncontrado = _repositorioMed.SelecionarPorId(med.Numero);
+
+            Assert.IsNull(medicamentoEncontrado);
+        }
+
+        [TestMethod]
+        public void DeveSelecionarApenasUm()
+        {
+            _repositorioForn.Inserir(forn);
+
+            med.Fornecedor = forn;
+
+            _repositorioMed.Inserir(med);
+
+            var medicamentoEncontrado = _repositorioMed.SelecionarPorId(med.Numero);
+
+            medicamentoEncontrado.Validade = DateTime.SpecifyKind(medicamentoEncontrado.Validade, DateTimeKind.Local); // Para ficar como "Local" ao invés de "Unespecified"
+
+            Assert.IsNotNull(medicamentoEncontrado);
+
+            Assert.AreEqual(med, medicamentoEncontrado);
+        }
+
+        [TestMethod]
+        public void DeveSelecionarTodos()
+        {
+            _repositorioForn.Inserir(forn);
+
+            med.Fornecedor = forn;
+
+            int quantidade = 3;
+            for (int i = 0; i < quantidade; i++)
+                _repositorioMed.Inserir(med);
+
+            var medicamentos = _repositorioMed.SelecionarTodos();
+
+            foreach (var medicamento in medicamentos)
+                medicamento.Validade = DateTime.SpecifyKind(medicamento.Validade, DateTimeKind.Local);
+
+            Assert.IsNotNull(medicamentos);
+
+            Assert.AreEqual(quantidade, medicamentos.Count);
         }
     }
 }
