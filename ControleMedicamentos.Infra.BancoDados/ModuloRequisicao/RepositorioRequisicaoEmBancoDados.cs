@@ -34,6 +34,13 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
                         @DATA
                     ); SELECT SCOPE_IDENTITY()";
 
+        private const string sqlExcluir =
+            @"DELETE 
+                FROM
+                    TBREQUISICAO
+                WHERE
+                    ID = @ID";
+
         private const string sqlSelecionarTodos =
             @"SELECT        
                 REQ.ID AS REQ_ID, 
@@ -106,6 +113,8 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
             WHERE
                 REQ.ID = @ID";
 
+        
+
         public ValidationResult Inserir(Requisicao novaRequisicao)
         {
             var validador = new ValidadorRequisicao();
@@ -128,6 +137,19 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
             conexaoComBanco.Close();
 
             return resultadoValidacao;
+        }
+
+        public void Excluir(Requisicao req)
+        {
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoExclusao = new SqlCommand(sqlExcluir, conexaoComBanco);
+
+            comandoExclusao.Parameters.AddWithValue("@ID", req.Numero);
+
+            conexaoComBanco.Open();
+            comandoExclusao.ExecuteNonQuery();
+            conexaoComBanco.Close();
         }
 
         public List<Requisicao> SelecionarTodos()

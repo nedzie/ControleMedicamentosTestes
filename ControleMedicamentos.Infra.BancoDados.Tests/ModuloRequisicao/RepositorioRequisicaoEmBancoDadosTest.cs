@@ -76,6 +76,26 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
         }
 
         [TestMethod]
+        public void DeveExcluirRequisicao()
+        {
+            _repositorioForn.Inserir(forn);
+            med.Fornecedor = forn;
+            _repositorioMed.Inserir(med);
+
+            _repositorioFunc.Inserir(func);
+
+            _repositorioPac.Inserir(pac);
+
+            _repositorioReq.Inserir(req);
+
+            _repositorioReq.Excluir(req);
+
+            var requisicaoEncontrada = _repositorioReq.SelecionarPorId(req.Numero);
+
+            Assert.IsNull(requisicaoEncontrada);
+        }
+
+        [TestMethod]
         public void DeveSelecionarTodas()
         {
             _repositorioForn.Inserir(forn);
