@@ -20,6 +20,7 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
 
         public RepositorioMedicamentoEmBancoDadosTest()
         {
+            Db.ExecutarSql("DELETE FROM TBREQUISICAO; DBCC CHECKIDENT (TBREQUISICAO, RESEED, 0)");
             Db.ExecutarSql("DELETE FROM TBMEDICAMENTO; DBCC CHECKIDENT (TBMEDICAMENTO, RESEED, 0)");
 
             med = new("Teste", "10 caracteres", "Teste", DateTime.Today);

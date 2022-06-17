@@ -11,10 +11,7 @@ using ControleMedicamentos.Infra.BancoDados.ModuloPaciente;
 using ControleMedicamentos.Infra.BancoDados.ModuloRequisicao;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
 {
@@ -24,7 +21,9 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
         Requisicao req;
         Fornecedor forn;
         Funcionario func;
+        Funcionario funcEditar;
         Paciente pac;
+        Paciente pacEditar;
         Medicamento med;
         RepositorioRequisicaoEmBancoDados _repositorioReq;
         RepositorioMedicamentoEmBancoDados _repositorioMed;
@@ -44,7 +43,9 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
             med = new("Teste", "10 caracteres", "Teste", DateTime.Today);
             forn = new("Fornecedor", "49998287261", "contato@gmail.com", "Lages", "SC");
             func = new("Gevásio", "gege123", "criptografada");
+            funcEditar = new("Editado", "aleatorio", "aleatoria");
             pac = new("Tobias de Antunes", "1234567890123");
+            pacEditar = new("Editado", "0000000000000");
 
             req = new(med, pac, func, 5, DateTime.Today);
 
@@ -67,6 +68,36 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
             _repositorioPac.Inserir(pac);
 
             _repositorioReq.Inserir(req);
+
+            var requisicaoEncontrada = _repositorioReq.SelecionarPorId(req.Numero);
+
+            Assert.IsNotNull(requisicaoEncontrada);
+
+            Assert.AreEqual(req, requisicaoEncontrada);
+        }
+
+        [TestMethod]
+        public void DeveEditarRequisicao()
+        {
+            _repositorioForn.Inserir(forn);
+            med.Fornecedor = forn;
+            _repositorioMed.Inserir(med);
+
+            _repositorioFunc.Inserir(func);
+
+            _repositorioPac.Inserir(pac);
+
+            _repositorioReq.Inserir(req);
+
+            _repositorioFunc.Inserir(funcEditar);
+
+            _repositorioPac.Inserir(pacEditar);
+
+            req.QtdMedicamento = 15;
+            req.Paciente = pacEditar;
+            req.Funcionario = funcEditar;
+
+            _repositorioReq.Editar(req);
 
             var requisicaoEncontrada = _repositorioReq.SelecionarPorId(req.Numero);
 
@@ -123,6 +154,26 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
             Assert.AreEqual(0, requisicoes[0].QtdMedicamento);
             Assert.AreEqual(1, requisicoes[1].QtdMedicamento);
             Assert.AreEqual(2, requisicoes[2].QtdMedicamento);
+        }
+
+        [TestMethod]
+        public void DeveSelecionarApenasUm()
+        {
+            _repositorioForn.Inserir(forn);
+            med.Fornecedor = forn;
+            _repositorioMed.Inserir(med);
+
+            _repositorioFunc.Inserir(func);
+
+            _repositorioPac.Inserir(pac);
+
+            _repositorioReq.Inserir(req);
+
+            var requisicaoEncontrada = _repositorioReq.SelecionarPorId(req.Numero);
+
+            Assert.IsNotNull(requisicaoEncontrada);
+
+            Assert.AreEqual(req, requisicaoEncontrada);
         }
     }
 }

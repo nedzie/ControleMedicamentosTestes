@@ -34,6 +34,16 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
                         @DATA
                     ); SELECT SCOPE_IDENTITY()";
 
+        private const string sqlEditar =
+            @"UPDATE
+                TBREQUISICAO
+                    SET
+                        FUNCIONARIO_ID = @FUNCIONARIO_ID,
+                        PACIENTE_ID = @PACIENTE_ID,
+                        MEDICAMENTO_ID = @MEDICAMENTO_ID,
+                        QUANTIDADEMEDICAMENTO = @QUANTIDADEMEDICAMENTO,
+                        DATA = @DATA";
+
         private const string sqlExcluir =
             @"DELETE 
                 FROM
@@ -134,6 +144,28 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
             var id = comandoInsercao.ExecuteScalar();
             novaRequisicao.Numero = Convert.ToInt32(id);
 
+            conexaoComBanco.Close();
+
+            return resultadoValidacao;
+        }
+
+        public ValidationResult Editar(Requisicao req)
+        {
+            var validador = new ValidadorRequisicao();
+
+            var resultadoValidacao = validador.Validate(req);
+
+            if (!resultadoValidacao.IsValid)
+                return resultadoValidacao;
+
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoEdicao = new SqlCommand(sqlEditar, conexaoComBanco);
+
+            ConfigurarParametrosRequisicao(req, comandoEdicao);
+
+            conexaoComBanco.Open();
+            comandoEdicao.ExecuteNonQuery();
             conexaoComBanco.Close();
 
             return resultadoValidacao;

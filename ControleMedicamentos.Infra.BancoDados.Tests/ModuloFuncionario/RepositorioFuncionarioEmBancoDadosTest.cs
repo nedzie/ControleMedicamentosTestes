@@ -12,6 +12,7 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloFuncionario
         RepositorioFuncionarioEmBancoDados _repositorioFuncionario;
         public RepositorioFuncionarioEmBancoDadosTest()
         {
+            Db.ExecutarSql("DELETE FROM TBREQUISICAO; DBCC CHECKIDENT (TBREQUISICAO, RESEED, 0)");
             Db.ExecutarSql("DELETE FROM TBFUNCIONARIO; DBCC CHECKIDENT (TBFUNCIONARIO, RESEED, 0)");
 
             _repositorioFuncionario = new();
