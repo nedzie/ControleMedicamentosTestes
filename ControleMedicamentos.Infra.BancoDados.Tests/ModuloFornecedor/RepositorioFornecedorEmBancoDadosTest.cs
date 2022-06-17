@@ -12,7 +12,7 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloFornecedor
         Fornecedor fornecedor;
         public RepositorioFornecedorEmBancoDadosTest()
         {
-            Db.ExecutarSql("DELETE FROM TBMEDICAMENTO; DBCC CHECKIDENT (TBFORNECEDOR, RESEED, 0)");
+            Db.ExecutarSql("DELETE FROM TBMEDICAMENTO; DBCC CHECKIDENT (TBMEDICAMENTO, RESEED, 0)");
             Db.ExecutarSql("DELETE FROM TBFORNECEDOR; DBCC CHECKIDENT (TBFORNECEDOR, RESEED, 0)");
 
             fornecedor = new("Fornecedor", "49998287261", "contato@empresa.com", "Lages", "Santa Catarina");
