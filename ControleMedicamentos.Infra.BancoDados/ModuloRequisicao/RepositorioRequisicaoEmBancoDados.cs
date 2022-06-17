@@ -5,6 +5,7 @@ using ControleMedicamentos.Dominio.ModuloPaciente;
 using ControleMedicamentos.Dominio.ModuloRequisicao;
 using FluentValidation.Results;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
@@ -33,7 +34,42 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
                         @DATA
                     ); SELECT SCOPE_IDENTITY()";
 
-        private const string sqlSelecionarRequisicaoPorId =
+        private const string sqlSelecionarTodos =
+            @"SELECT        
+                REQ.ID AS REQ_ID, 
+                REQ.QUANTIDADEMEDICAMENTO AS REQ_QTD, 
+                REQ.DATA AS REQ_DATA, 
+
+                FUNC.ID AS FUNC_ID, 
+                FUNC.NOME AS FUNC_NOME, 
+                FUNC.LOGIN AS FUNC_LOGIN, 
+                FUNC.SENHA AS FUNC_SENHA, 
+
+                PAC.ID AS PAC_ID, 
+                PAC.NOME AS PAC_NOME, 
+                PAC.CARTAOSUS AS PAC_CARTAOSUS, 
+
+                MED.ID AS MED_ID, 
+                MED.NOME AS MED_NOME, 
+                MED.DESCRICAO AS MED_DESC, 
+                MED.LOTE AS MED_LOTE, 
+                MED.VALIDADE AS MED_VAL, 
+                MED.QUANTIDADEDISPONIVEL AS MED_QTD, 
+
+                FORN.ID AS FORN_ID, 
+                FORN.NOME AS FORN_NOME, 
+                FORN.TELEFONE AS FORN_TEL, 
+                FORN.EMAIL AS FORN_EMAIL, 
+                FORN.CIDADE AS FORN_CID, 
+                FORN.ESTADO AS FORN_EST
+            FROM            
+                TBREQUISICAO AS REQ INNER JOIN
+                TBFUNCIONARIO AS FUNC ON REQ.FUNCIONARIO_ID = FUNC.ID INNER JOIN
+                TBPACIENTE AS PAC ON REQ.PACIENTE_ID = PAC.ID INNER JOIN
+                TBMEDICAMENTO AS MED ON REQ.MEDICAMENTO_ID = MED.ID INNER JOIN
+                TBFORNECEDOR AS FORN ON MED.FORNECEDOR_ID = FORN.ID";
+
+        private const string sqlSelecionarPorId =
             @"SELECT        
                 REQ.ID AS REQ_ID, 
                 REQ.QUANTIDADEMEDICAMENTO AS REQ_QTD, 
@@ -94,11 +130,31 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
             return resultadoValidacao;
         }
 
+        public List<Requisicao> SelecionarTodos()
+        {
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTodos, conexaoComBanco);
+
+            conexaoComBanco.Open();
+
+            SqlDataReader leitorRequisicoes = comandoSelecao.ExecuteReader();
+
+            List<Requisicao> requisicoes = new List<Requisicao>();
+
+            while (leitorRequisicoes.Read())
+                requisicoes.Add(ConverterParaRequisicao(leitorRequisicoes));
+
+            conexaoComBanco.Close();
+
+            return requisicoes;
+        }
+
         public Requisicao SelecionarPorId(int id)
         {
             SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
 
-            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarRequisicaoPorId, conexaoComBanco);
+            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarPorId, conexaoComBanco);
 
             comandoSelecao.Parameters.AddWithValue("@ID", id);
 

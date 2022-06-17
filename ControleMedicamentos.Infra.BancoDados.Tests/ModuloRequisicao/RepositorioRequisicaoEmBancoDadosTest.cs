@@ -34,11 +34,12 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
 
         public RepositorioRequisicaoEmBancoDadosTest()
         {
+            Db.ExecutarSql("DELETE FROM TBREQUISICAO; DBCC CHECKIDENT (TBREQUISICAO, RESEED, 0)");
             Db.ExecutarSql("DELETE FROM TBMEDICAMENTO; DBCC CHECKIDENT (TBMEDICAMENTO, RESEED, 0)");
             Db.ExecutarSql("DELETE FROM TBFORNECEDOR; DBCC CHECKIDENT (TBFORNECEDOR, RESEED, 0)");
             Db.ExecutarSql("DELETE FROM TBFUNCIONARIO; DBCC CHECKIDENT (TBFUNCIONARIO, RESEED, 0)");
             Db.ExecutarSql("DELETE FROM TBPACIENTE; DBCC CHECKIDENT (TBPACIENTE, RESEED, 0)");
-            Db.ExecutarSql("DELETE FROM TBREQUISICAO; DBCC CHECKIDENT (TBREQUISICAO, RESEED, 0)");
+            
 
             med = new("Teste", "10 caracteres", "Teste", DateTime.Today);
             forn = new("Fornecedor", "49998287261", "contato@gmail.com", "Lages", "SC");
@@ -72,6 +73,36 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
             Assert.IsNotNull(requisicaoEncontrada);
 
             Assert.AreEqual(req, requisicaoEncontrada);
+        }
+
+        [TestMethod]
+        public void DeveSelecionarTodas()
+        {
+            _repositorioForn.Inserir(forn);
+
+            med.Fornecedor = forn;
+            
+            _repositorioMed.Inserir(med);
+
+            _repositorioFunc.Inserir(func);
+
+            _repositorioPac.Inserir(pac);
+
+            int quantidade = 3;
+
+            for (int i = 0; i < quantidade; i++)
+            {
+                req.QtdMedicamento = i;
+                _repositorioReq.Inserir(req);
+            }
+
+            var requisicoes = _repositorioReq.SelecionarTodos();
+
+            Assert.IsNotNull(requisicoes);
+
+            Assert.AreEqual(0, requisicoes[0].QtdMedicamento);
+            Assert.AreEqual(1, requisicoes[1].QtdMedicamento);
+            Assert.AreEqual(2, requisicoes[2].QtdMedicamento);
         }
     }
 }
